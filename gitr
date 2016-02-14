@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # "THE CAFFEINE-WARE LICENSE" (Revision 3):
 # <svetlin.mladenov@gmail.com> created this stuff. You can do whatever you want with it.
@@ -31,5 +31,16 @@ run_git_in() {
     cd $CURRENT_DIR
 }
 
-ARGS=$@
-find . -name '.git' | xargs -I{} run_git_in {} $ARGS
+MARK=_!_unlikely_git_command_name_!_
+
+run_for_all_git_repos() {
+    ARGS=$@
+    find . -name '.git' | xargs -I{} $0 "$MARK" {} $ARGS
+}
+
+if [ "$1" == "$MARK" ]; then
+    shift;
+    run_git_in $@;
+else
+    run_for_all_git_repos $@;
+fi
