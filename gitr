@@ -1,0 +1,35 @@
+#!/bin/env bash
+
+# "THE CAFFEINE-WARE LICENSE" (Revision 3):
+# <svetlin.mladenov@gmail.com> created this stuff. You can do whatever you want with it.
+# If we meet some day, and you think this stuff is worth it,
+# you can buy me a caffeine-containing drink
+# (like a cup of coffee or black tea) in return.   Svetlin Mladenov
+
+
+run_git_in() {
+    CURRENT_DIR=$(pwd)
+
+    REPO=$(dirname $1)
+    shift
+
+    run_git() {
+        git $@
+        echo
+    }
+
+    cd $REPO
+    if [ "$1" == 's'  -o  "$1" == 'status' ]; then
+        if [ -n "$(git status --porcelain)" ]; then
+            echo ">> " $REPO
+            run_git "$@"
+        fi
+    else
+        run_git "$@"
+    fi
+
+    cd $CURRENT_DIR
+}
+
+ARGS=$@
+find . -name '.git' | xargs -I{} run_git_in {} $ARGS
